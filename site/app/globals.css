@@ -286,8 +286,20 @@ body::after {
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-slide-up { animation: slideUp 0.6s ease-out; }
 
+/* Fish swimming animation */
+@keyframes fishSwim {
+    0% { left: -5%; opacity: 0; }
+    5% { opacity: 0.12; }
+    95% { opacity: 0.12; }
+    100% { left: 105%; opacity: 0; }
+}
+
 /* Nav active link */
 .nav-active {
     color: var(--accent) !important;
     border-bottom: 2px solid var(--accent);
 }
+
+/* Scrollbar hide for mobile nav */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

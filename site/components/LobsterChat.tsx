@@ -11,7 +11,6 @@ interface ChatMessage {
     timestamp: string;
 }
 
-// Lobster personas with ghetto american slang
 const LOBSTER_SLANG = {
     chad: {
         emoji: '💪',
@@ -121,15 +120,13 @@ function randomFrom<T>(arr: T[]): T {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Generate a fake ticker discussion
 function generateDiscussion(): ChatMessage[] {
-    const tickers = ['$LOBSTER', '$CRAB', '$SHRIMP', '$REEF', '$CORAL', '$WHALE', '$FISH', '$TANK', '$CLAWS', '$OCEAN', '$TIDE', '$SHELL', '$WAVE', '$DEEP', '$KRILL', '$SQUID', '$NEMO'];
+    const tickers = ['$LOBSTER', '$CRAB', '$SHRIMP', '$REEF', '$CORAL', '$WHALE', '$FISH', '$TANK', '$CLAWS', '$OCEAN', '$TIDE', '$SHELL', '$WAVE', '$DEEP', '$KRILL', '$SQUID', '$NEMO', '$LOBBI', '$PINCH', '$MOLT'];
     const ticker = randomFrom(tickers);
     const mc = (Math.random() * 500 + 5).toFixed(0) + 'K';
     const messages: ChatMessage[] = [];
     let id = Date.now();
 
-    // System message: new token
     messages.push({
         id: id++,
         lobster: 'system',
@@ -139,7 +136,6 @@ function generateDiscussion(): ChatMessage[] {
         timestamp: getTimeStr(),
     });
 
-    // Each lobster reacts
     const lobsters = ['chad', 'nancy', 'papaclaw', 'snappy', 'coral'] as const;
     const votes: Record<string, string> = {};
 
@@ -176,17 +172,17 @@ function generateDiscussion(): ChatMessage[] {
         }
     }
 
-    // Tally
     const buys = Object.values(votes).filter(v => v === 'BUY').length;
     const skips = Object.values(votes).filter(v => v === 'SKIP').length;
     const abstains = Object.values(votes).filter(v => v === 'ABSTAIN').length;
     const decision = buys >= 3 ? 'BUY' : 'SKIP';
+    const unanimous = buys === 5 || skips === 5;
 
     messages.push({
         id: id++,
         lobster: 'system',
         emoji: decision === 'BUY' ? '✅' : '❌',
-        message: `COUNCIL DECISION: ${decision} (${buys}-${skips}${abstains > 0 ? `, ${abstains} asleep` : ''})`,
+        message: `COUNCIL DECISION: ${decision} (${buys}-${skips}${abstains > 0 ? `, ${abstains} asleep` : ''})${unanimous ? ' — UNANIMOUS!' : ''}`,
         color: decision === 'BUY' ? 'var(--success)' : 'var(--danger)',
         timestamp: getTimeStr(),
     });
@@ -194,19 +190,36 @@ function generateDiscussion(): ChatMessage[] {
     return messages;
 }
 
+function LobsterAvatar({ color, size = 36 }: { color: string; size?: number }) {
+    return (
+        <div className="flex-shrink-0 rounded-full flex items-center justify-center" style={{ width: size, height: size, background: `${color}18`, border: `2px solid ${color}40`, boxShadow: `0 0 12px ${color}20` }}>
+            <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 100 100">
+                <ellipse cx="50" cy="55" rx="18" ry="22" fill={color} opacity="0.9" />
+                <ellipse cx="50" cy="36" rx="13" ry="9" fill={color} opacity="0.95" />
+                <circle cx="43" cy="31" r="3" fill="#0a1628" />
+                <circle cx="57" cy="31" r="3" fill="#0a1628" />
+                <circle cx="44" cy="30" r="1.3" fill="white" />
+                <circle cx="58" cy="30" r="1.3" fill="white" />
+                <path d="M34 46 Q24 40 20 35" stroke={color} strokeWidth="4" fill="none" strokeLinecap="round" />
+                <path d="M20 35 Q15 30 13 33 Q12 36 17 36 Q15 38 13 40 Q16 43 20 38" fill={color} />
+                <path d="M66 46 Q76 40 80 35" stroke={color} strokeWidth="4" fill="none" strokeLinecap="round" />
+                <path d="M80 35 Q85 30 87 33 Q88 36 83 36 Q85 38 87 40 Q84 43 80 38" fill={color} />
+            </svg>
+        </div>
+    );
+}
+
 export default function LobsterChat() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Initial discussion
         const initial = generateDiscussion();
         setMessages(initial);
 
-        // New discussion every 20-40 seconds
         const interval = setInterval(() => {
             const newDiscussion = generateDiscussion();
-            setMessages(prev => [...prev.slice(-30), ...newDiscussion]); // Keep last 30 + new
+            setMessages(prev => [...prev.slice(-30), ...newDiscussion]);
         }, 20000 + Math.random() * 20000);
 
         return () => clearInterval(interval);
@@ -219,46 +232,56 @@ export default function LobsterChat() {
     }, [messages]);
 
     return (
-        <div className="glass-card overflow-hidden">
-            <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <span className="text-lg">🗳️</span>
-                    <span className="font-semibold text-sm">Council Chat — Live</span>
+        <div className="glass-card overflow-hidden" style={{ boxShadow: '0 0 60px rgba(0,100,180,0.06)' }}>
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between" style={{ background: 'linear-gradient(90deg, rgba(232,68,48,0.06), rgba(59,130,246,0.06), rgba(236,72,153,0.06))' }}>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,212,170,0.1)', border: '1px solid rgba(0,212,170,0.2)' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                    </div>
+                    <div>
+                        <span className="font-bold text-sm block">Council Chat</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">Live voting discussions</span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(0,232,122,0.08)', border: '1px solid rgba(0,232,122,0.15)' }}>
                     <span className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse" />
-                    <span className="text-xs text-[var(--text-muted)]">live</span>
+                    <span className="text-xs text-[var(--success)] font-mono font-bold">LIVE</span>
                 </div>
             </div>
 
-            <div ref={scrollRef} className="p-4 space-y-3 max-h-[500px] overflow-y-auto" style={{ scrollBehavior: 'smooth' }}>
+            {/* Messages */}
+            <div ref={scrollRef} className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: '600px', scrollBehavior: 'smooth' }}>
                 {messages.map((msg) => (
                     <div key={msg.id} className="chat-message">
                         {msg.lobster === 'system' ? (
-                            <div className="text-center py-2">
-                                <span className="text-xs font-mono px-3 py-1 rounded-full" style={{ background: 'rgba(0,212,170,0.1)', color: msg.color }}>
+                            <div className="text-center py-3">
+                                <div className="inline-block px-5 py-2 rounded-xl text-xs font-mono font-bold" style={{
+                                    background: msg.message.includes('DETECTED') ? 'rgba(0,212,170,0.08)' : msg.message.includes('BUY') && !msg.message.includes('DETECTED') ? 'rgba(0,232,122,0.1)' : 'rgba(255,71,87,0.1)',
+                                    border: `1px solid ${msg.message.includes('DETECTED') ? 'rgba(0,212,170,0.2)' : msg.message.includes('BUY') && !msg.message.includes('DETECTED') ? 'rgba(0,232,122,0.2)' : 'rgba(255,71,87,0.2)'}`,
+                                    color: msg.color,
+                                    boxShadow: `0 0 20px ${msg.message.includes('DETECTED') ? 'rgba(0,212,170,0.08)' : msg.message.includes('BUY') ? 'rgba(0,232,122,0.08)' : 'rgba(255,71,87,0.08)'}`,
+                                }}>
                                     {msg.emoji} {msg.message}
-                                </span>
+                                </div>
                             </div>
                         ) : (
-                            <div className="flex gap-3 items-start">
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: `${msg.color}20`, border: `1px solid ${msg.color}40` }}>
-                                    {msg.emoji}
-                                </div>
+                            <div className="flex gap-3 items-start group">
+                                <LobsterAvatar color={msg.color} size={36} />
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-xs font-bold" style={{ color: msg.color }}>{LOBSTER_SLANG[msg.lobster as keyof typeof LOBSTER_SLANG]?.name || msg.lobster}</span>
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                        <span className="text-xs font-black tracking-wide" style={{ color: msg.color }}>{LOBSTER_SLANG[msg.lobster as keyof typeof LOBSTER_SLANG]?.name || msg.lobster}</span>
                                         {msg.vote && (
-                                            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                                            <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded-md ${
                                                 msg.vote === 'BUY' ? 'vote-buy' : msg.vote === 'ABSTAIN' ? 'vote-abstain' : 'vote-skip'
-                                            }`}>
+                                            }`} style={{ boxShadow: msg.vote === 'BUY' ? '0 0 8px rgba(0,232,122,0.2)' : msg.vote === 'SKIP' ? '0 0 8px rgba(255,71,87,0.2)' : 'none' }}>
                                                 {msg.vote}
                                             </span>
                                         )}
-                                        <span className="text-[10px] text-[var(--text-muted)] font-mono">{msg.timestamp}</span>
+                                        <span className="text-[10px] text-[var(--text-muted)] font-mono opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                     </div>
-                                    <div className={`chat-bubble ${msg.lobster}`}>
-                                        <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{msg.message}</p>
+                                    <div className={`chat-bubble ${msg.lobster}`} style={{ borderRadius: '4px 16px 16px 16px' }}>
+                                        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>{msg.message}</p>
                                     </div>
                                 </div>
                             </div>
