@@ -1,60 +1,68 @@
 @import "tailwindcss";
 
-:root {
-    --bg-primary: #0a1628;
-    --bg-secondary: #0f1f3a;
-    --bg-card: #132744;
-    --accent: #00d4aa;
-    --accent-light: #33ffd4;
-    --accent-dark: #009977;
-    --lobster: #e84430;
-    --lobster-light: #ff6b57;
-    --lobster-dark: #b5321f;
-    --text-primary: #e4f0f6;
-    --text-secondary: #8baab8;
-    --text-muted: #4a6a7a;
-    --success: #00e87a;
-    --danger: #ff4757;
-    --warning: #ffa340;
-    --border: #1e3a5f;
-    --glass: rgba(0, 212, 170, 0.08);
-    --bubble: rgba(255, 255, 255, 0.06);
-    --water-glow: rgba(0, 212, 170, 0.12);
-    --sand: #c4a46a;
+/* ═══════════════════════════════════════════════════════════════ */
+/* BASE — Variables, reset, body                                   */
+/* ═══════════════════════════════════════════════════════════════ */
+@layer base {
+    :root {
+        --bg-primary: #0a1628;
+        --bg-secondary: #0f1f3a;
+        --bg-card: #132744;
+        --accent: #00d4aa;
+        --accent-light: #33ffd4;
+        --accent-dark: #009977;
+        --lobster: #e84430;
+        --lobster-light: #ff6b57;
+        --lobster-dark: #b5321f;
+        --text-primary: #e4f0f6;
+        --text-secondary: #8baab8;
+        --text-muted: #4a6a7a;
+        --success: #00e87a;
+        --danger: #ff4757;
+        --warning: #ffa340;
+        --border: #1e3a5f;
+        --glass: rgba(0, 212, 170, 0.08);
+        --bubble: rgba(255, 255, 255, 0.06);
+        --water-glow: rgba(0, 212, 170, 0.12);
+        --sand: #c4a46a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    overflow-x: hidden;
-    position: relative;
-}
-
-/* Deep ocean background layers */
+/* ═══════════════════════════════════════════════════════════════ */
+/* FULL-SITE BACKGROUND — Lobster underwater image                 */
+/* ═══════════════════════════════════════════════════════════════ */
 body::before {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     background:
-        radial-gradient(ellipse at 20% 80%, rgba(0, 80, 120, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(0, 60, 140, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(0, 212, 170, 0.03) 0%, transparent 70%),
-        linear-gradient(180deg, #060e1a 0%, #0a1628 30%, #0d1f3d 60%, #0a1628 100%);
+        linear-gradient(180deg, rgba(6,14,26,0.55) 0%, rgba(10,22,40,0.5) 30%, rgba(10,22,40,0.6) 60%, rgba(10,22,40,0.85) 100%),
+        url('/lobster-bg.jpg') center 40% / cover no-repeat;
     z-index: -2;
     pointer-events: none;
 }
 
-/* Underwater light rays */
 body::after {
     content: '';
     position: fixed;
-    top: -50%;
-    left: -10%;
-    width: 120%;
-    height: 100%;
+    inset: 0;
     background:
         linear-gradient(170deg, rgba(0, 212, 170, 0.02) 0%, transparent 40%),
         linear-gradient(190deg, rgba(0, 100, 200, 0.03) 0%, transparent 50%);
@@ -69,49 +77,128 @@ body::after {
     66% { transform: translateX(-2%) rotate(-1deg); opacity: 0.6; }
 }
 
-/* Caustic light pattern overlay */
-.caustics {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-        repeating-conic-gradient(from 0deg at 50% 50%, rgba(0,212,170,0.01) 0deg, transparent 60deg, rgba(0,100,200,0.01) 120deg, transparent 180deg);
-    animation: causticsMove 20s linear infinite;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.4;
+/* ═══════════════════════════════════════════════════════════════ */
+/* COMPONENTS — All reusable UI classes (inside @layer so TW wins)*/
+/* ═══════════════════════════════════════════════════════════════ */
+@layer components {
+    /* Caustics overlay */
+    .caustics {
+        position: fixed;
+        inset: 0;
+        background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(0,212,170,0.01) 0deg, transparent 60deg, rgba(0,100,200,0.01) 120deg, transparent 180deg);
+        animation: causticsMove 20s linear infinite;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    /* Bubbles */
+    .bubbles-container {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .bubble {
+        position: absolute;
+        bottom: -20px;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+        border-radius: 50%;
+        animation: bubbleRise linear infinite;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Glass card */
+    .glass-card {
+        background: linear-gradient(135deg, rgba(19, 39, 68, 0.8), rgba(15, 31, 58, 0.6));
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+        border-color: rgba(0, 212, 170, 0.3);
+        box-shadow: 0 8px 40px rgba(0, 212, 170, 0.08);
+    }
+
+    /* Stat card */
+    .stat-card { overflow: visible; }
+    .stat-card:hover { transform: translateY(-2px); }
+
+    /* Chat */
+    .chat-message { animation: chatSlideIn 0.4s ease-out; }
+    .chat-bubble {
+        position: relative;
+        border-radius: 12px;
+        padding: 10px 14px;
+        max-width: 85%;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .chat-bubble.chad { background: rgba(232, 68, 48, 0.15); border: 1px solid rgba(232, 68, 48, 0.3); }
+    .chat-bubble.nancy { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .chat-bubble.papaclaw { background: rgba(168, 162, 158, 0.15); border: 1px solid rgba(168, 162, 158, 0.3); }
+    .chat-bubble.snappy { background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.3); }
+    .chat-bubble.coral { background: rgba(244, 114, 182, 0.15); border: 1px solid rgba(244, 114, 182, 0.3); }
+
+    /* Terminal */
+    .terminal {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow: hidden;
+    }
+    .terminal-header {
+        background: #1a1a1a;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .terminal-body { padding: 16px; max-height: 600px; overflow-y: auto; }
+    .terminal-line { animation: terminalFadeIn 0.3s ease; }
+
+    /* Tank badges */
+    .tank-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tank-badge.reef-paradise { background: rgba(0, 212, 170, 0.2); color: var(--accent-light); border: 1px solid rgba(0, 212, 170, 0.3); }
+    .tank-badge.steady-currents { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tank-badge.choppy-waters { background: rgba(250, 204, 21, 0.2); color: #fbbf24; border: 1px solid rgba(250, 204, 21, 0.3); }
+    .tank-badge.red-tide { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .tank-badge.tank-breach { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    /* Vote badges */
+    .vote-buy { color: var(--success); background: rgba(0, 232, 122, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+    .vote-skip { color: var(--danger); background: rgba(255, 71, 87, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+    .vote-abstain { color: var(--text-muted); background: rgba(74, 106, 122, 0.2); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+
+    /* Glow effects */
+    .glow-accent { box-shadow: 0 0 20px rgba(0, 212, 170, 0.15), 0 0 60px rgba(0, 212, 170, 0.05); }
+    .glow-lobster { box-shadow: 0 0 20px rgba(232, 68, 48, 0.15), 0 0 60px rgba(232, 68, 48, 0.05); }
+    .glow-text { text-shadow: 0 0 20px rgba(0, 212, 170, 0.5); }
+
+    /* Animations utility classes */
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+    .animate-slide-up { animation: slideUp 0.6s ease-out; }
+
+    /* Scrollbar hide */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
+/* ═══════════════════════════════════════════════════════════════ */
+/* KEYFRAMES                                                       */
+/* ═══════════════════════════════════════════════════════════════ */
 @keyframes causticsMove {
     0% { transform: scale(1) rotate(0deg); }
     100% { transform: scale(1.1) rotate(360deg); }
-}
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* SCROLLBAR                                                      */
-/* ═══════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* BUBBLES ANIMATION                                               */
-/* ═══════════════════════════════════════════════════════════════ */
-.bubbles-container {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.bubble {
-    position: absolute;
-    bottom: -20px;
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
-    border-radius: 50%;
-    animation: bubbleRise linear infinite;
-    border: 1px solid rgba(255,255,255,0.05);
 }
 
 @keyframes bubbleRise {
@@ -120,60 +207,14 @@ body::after {
     100% { transform: translateY(-110vh) translateX(-10px) scale(0.8); opacity: 0; }
 }
 
-/* ═══════════════════════════════════════════════════════════════ */
-/* GLASS CARDS                                                     */
-/* ═══════════════════════════════════════════════════════════════ */
-.glass-card {
-    background: linear-gradient(135deg, rgba(19, 39, 68, 0.8), rgba(15, 31, 58, 0.6));
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    transition: all 0.3s ease;
+@keyframes chatSlideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-.glass-card:hover {
-    border-color: rgba(0, 212, 170, 0.3);
-    box-shadow: 0 8px 40px rgba(0, 212, 170, 0.08);
-}
-
-/* Stat cards - simpler hover, no overflow issues */
-.stat-card {
-    overflow: visible;
-}
-.stat-card:hover {
-    transform: translateY(-2px);
-}
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* WATER LEVEL BAR                                                 */
-/* ═══════════════════════════════════════════════════════════════ */
-.water-bar {
-    position: relative;
-    height: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.water-fill {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(180deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-dark) 100%);
-    transition: height 1s ease;
-    border-radius: 0 0 8px 8px;
-}
-
-.water-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: waterShimmer 3s ease-in-out infinite;
+@keyframes terminalFadeIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes waterShimmer {
@@ -181,99 +222,6 @@ body::after {
     50% { transform: translateX(100%); }
 }
 
-/* ═══════════════════════════════════════════════════════════════ */
-/* LOBSTER CHAT BOX                                                */
-/* ═══════════════════════════════════════════════════════════════ */
-.chat-message {
-    animation: chatSlideIn 0.4s ease-out;
-}
-
-@keyframes chatSlideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.chat-bubble {
-    position: relative;
-    border-radius: 12px;
-    padding: 10px 14px;
-    max-width: 85%;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.chat-bubble.chad { background: rgba(232, 68, 48, 0.15); border: 1px solid rgba(232, 68, 48, 0.3); }
-.chat-bubble.nancy { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
-.chat-bubble.papaclaw { background: rgba(168, 162, 158, 0.15); border: 1px solid rgba(168, 162, 158, 0.3); }
-.chat-bubble.snappy { background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.3); }
-.chat-bubble.coral { background: rgba(244, 114, 182, 0.15); border: 1px solid rgba(244, 114, 182, 0.3); }
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* TERMINAL                                                        */
-/* ═══════════════════════════════════════════════════════════════ */
-.terminal {
-    background: #0d0d0d;
-    border: 1px solid #2a2a2a;
-    border-radius: 12px;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    overflow: hidden;
-}
-
-.terminal-header {
-    background: #1a1a1a;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 1px solid #2a2a2a;
-}
-
-.terminal-dot {
-    width: 12px; height: 12px; border-radius: 50%;
-}
-
-.terminal-body {
-    padding: 16px;
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.terminal-line { animation: terminalFadeIn 0.3s ease; }
-
-@keyframes terminalFadeIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* TANK STATE BADGES                                               */
-/* ═══════════════════════════════════════════════════════════════ */
-.tank-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.tank-badge.reef-paradise { background: rgba(0, 212, 170, 0.2); color: var(--accent-light); border: 1px solid rgba(0, 212, 170, 0.3); }
-.tank-badge.steady-currents { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-.tank-badge.choppy-waters { background: rgba(250, 204, 21, 0.2); color: #fbbf24; border: 1px solid rgba(250, 204, 21, 0.3); }
-.tank-badge.red-tide { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-.tank-badge.tank-breach { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* VOTE BADGE                                                      */
-/* ═══════════════════════════════════════════════════════════════ */
-.vote-buy { color: var(--success); background: rgba(0, 232, 122, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
-.vote-skip { color: var(--danger); background: rgba(255, 71, 87, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
-.vote-abstain { color: var(--text-muted); background: rgba(74, 106, 122, 0.2); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* GLOW EFFECTS                                                    */
-/* ═══════════════════════════════════════════════════════════════ */
-.glow-accent { box-shadow: 0 0 20px rgba(0, 212, 170, 0.15), 0 0 60px rgba(0, 212, 170, 0.05); }
-.glow-lobster { box-shadow: 0 0 20px rgba(232, 68, 48, 0.15), 0 0 60px rgba(232, 68, 48, 0.05); }
-.glow-text { text-shadow: 0 0 20px rgba(0, 212, 170, 0.5); }
-
-/* ═══════════════════════════════════════════════════════════════ */
-/* ANIMATIONS                                                      */
-/* ═══════════════════════════════════════════════════════════════ */
 @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
@@ -289,24 +237,9 @@ body::after {
     to { transform: translateY(0); opacity: 1; }
 }
 
-.animate-float { animation: float 4s ease-in-out infinite; }
-.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
-.animate-slide-up { animation: slideUp 0.6s ease-out; }
-
-/* Fish swimming animation */
 @keyframes fishSwim {
     0% { left: -5%; opacity: 0; }
     5% { opacity: 0.12; }
     95% { opacity: 0.12; }
     100% { left: 105%; opacity: 0; }
 }
-
-/* Nav active link */
-.nav-active {
-    color: var(--accent) !important;
-    border-bottom: 2px solid var(--accent);
-}
-
-/* Scrollbar hide for mobile nav */
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

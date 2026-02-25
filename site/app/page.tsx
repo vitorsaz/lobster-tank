@@ -9,7 +9,6 @@ import type { SystemStatus } from '@/lib/types';
 
 export default function Home() {
     const [status, setStatus] = useState<SystemStatus | null>(null);
-    const [scrollY, setScrollY] = useState(0);
 
     useEffect(() => {
         const sb = getSupabase();
@@ -27,12 +26,6 @@ export default function Home() {
         return () => { sb.removeChannel(channel); };
     }, []);
 
-    useEffect(() => {
-        const handleScroll = () => setScrollY(window.scrollY);
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     const s = status || {
         water_level: 75, tank_state: 'STEADY_CURRENTS', balance: 0.5,
         total_pnl: 0, today_pnl: 0, wins: 0, losses: 0, win_rate: 0,
@@ -40,94 +33,68 @@ export default function Home() {
     };
 
     return (
-        <div className="relative">
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* FULL-SCREEN HERO                                      */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden -mt-16 pt-16">
-                {/* Background image */}
-                <div
-                    className="absolute inset-0 z-0"
-                    style={{
-                        backgroundImage: 'url(/lobster-bg.jpg)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center 40%',
-                        backgroundRepeat: 'no-repeat',
-                        transform: `translateY(${scrollY * 0.15}px) scale(1.1)`,
-                        transition: 'transform 0.1s linear',
-                    }}
-                />
-                <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(180deg, rgba(6,14,26,0.55) 0%, rgba(10,22,40,0.5) 30%, rgba(10,22,40,0.45) 60%, rgba(10,22,40,0.85) 85%, rgba(10,22,40,1) 100%)' }} />
-                <div className="absolute inset-0 z-[2] pointer-events-none" style={{ boxShadow: 'inset 0 0 150px 60px rgba(6,14,26,0.7)' }} />
-
-                <div className="relative z-10 text-center px-6 animate-slide-up w-full max-w-4xl mx-auto">
-                    <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <div>
+            {/* ══════════════ HERO ══════════════ */}
+            <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 24px', marginTop: '-64px', paddingTop: '64px' }}>
+                <div className="animate-slide-up" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+                    <h1 style={{ fontSize: 'clamp(3rem, 10vw, 8rem)', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '24px', fontFamily: "'Space Grotesk', sans-serif", lineHeight: 1 }}>
                         THE LOBSTER{' '}
-                        <span className="relative inline-block" style={{ color: 'var(--accent)' }}>
-                            TANK
-                            <span className="absolute -inset-2 blur-2xl opacity-30 rounded-full" style={{ background: 'var(--accent)' }} />
-                        </span>
+                        <span style={{ color: 'var(--accent)', textShadow: '0 0 40px rgba(0,212,170,0.4)' }}>TANK</span>
                     </h1>
 
-                    <p className="text-xl sm:text-2xl md:text-3xl text-[var(--text-secondary)] max-w-3xl mx-auto leading-relaxed mb-4 font-light">
+                    <p style={{ fontSize: 'clamp(1.1rem, 3vw, 1.8rem)', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 }}>
                         Five lobsters. One tank. Zero financial literacy.
                     </p>
-                    <p className="text-base md:text-lg text-[var(--text-muted)] max-w-2xl mx-auto mb-10">
+                    <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '40px' }}>
                         They vote on memecoins by committee. Don&apos;t tap the glass.
                     </p>
 
-                    <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
-                        <span className="text-sm font-mono px-5 py-2.5 rounded-full font-bold" style={{ background: 'rgba(0,212,170,0.12)', color: 'var(--accent)', border: '1px solid rgba(0,212,170,0.25)', boxShadow: '0 0 30px rgba(0,212,170,0.1)' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '48px' }}>
+                        <span style={{ fontSize: '14px', fontFamily: 'monospace', padding: '10px 20px', borderRadius: '9999px', fontWeight: 700, background: 'rgba(0,212,170,0.12)', color: 'var(--accent)', border: '1px solid rgba(0,212,170,0.25)', boxShadow: '0 0 30px rgba(0,212,170,0.1)' }}>
                             $TANK
                         </span>
                         <span className={`tank-badge ${s.tank_state.toLowerCase().replace(/_/g, '-')}`}>
                             {s.tank_state.replace(/_/g, ' ')}
                         </span>
-                        <span className="text-xs text-[var(--text-muted)] font-mono flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <span className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse" />
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '9999px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)', animation: 'pulse-glow 2s infinite' }} />
                             {s.total_trades > 0 ? 'Live Trading' : 'Initializing Tank'}
                         </span>
                     </div>
 
-                    <div className="animate-bounce opacity-40">
-                        <svg className="mx-auto" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2">
+                    <div className="animate-bounce" style={{ opacity: 0.4 }}>
+                        <svg style={{ margin: '0 auto' }} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2">
                             <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
                         </svg>
                     </div>
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* THE TANK                                              */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="max-w-6xl mx-auto px-6 -mt-8 mb-20">
+            {/* ══════════════ TANK ══════════════ */}
+            <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>
                 <TankVisual waterLevel={s.water_level} tankState={s.tank_state} />
             </section>
 
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* LORE QUOTE                                            */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="max-w-3xl mx-auto px-6 mb-24">
-                <div className="relative glass-card p-10 md:p-14 text-center">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
-                    <span className="text-4xl mb-4 block opacity-30">&ldquo;</span>
-                    <p className="text-lg md:text-xl text-[var(--text-secondary)] leading-relaxed italic" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            {/* ══════════════ LORE ══════════════ */}
+            <section style={{ maxWidth: '700px', margin: '0 auto', padding: '0 24px 80px' }}>
+                <div className="glass-card" style={{ padding: '48px 40px', textAlign: 'center', position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '300px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
+                    <span style={{ fontSize: '2rem', opacity: 0.3, display: 'block', marginBottom: '16px' }}>&ldquo;</span>
+                    <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic', fontFamily: "'Space Grotesk', sans-serif" }}>
                         They were supposed to be dinner. Instead, someone left a laptop next to the tank.
                         Now they trade memecoins by committee &mdash; arguing, voting, and occasionally profiting
                         through the sheer chaos of crustacean democracy.
                     </p>
-                    <span className="text-4xl mt-4 block opacity-30">&rdquo;</span>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
+                    <span style={{ fontSize: '2rem', opacity: 0.3, display: 'block', marginTop: '16px' }}>&rdquo;</span>
+                    <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '300px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* TANK STATUS                                           */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="max-w-6xl mx-auto px-6 mb-24">
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Tank Status</h2>
-                    <p className="text-base text-[var(--text-muted)]">Real-time trading metrics</p>
+            {/* ══════════════ STATS ══════════════ */}
+            <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '8px', fontFamily: "'Space Grotesk', sans-serif" }}>Tank Status</h2>
+                    <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Real-time trading metrics</p>
                 </div>
                 <StatsGrid
                     balance={s.balance}
@@ -142,67 +109,47 @@ export default function Home() {
                 />
             </section>
 
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* COUNCIL VOTE                                          */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="max-w-6xl mx-auto px-6 mb-24">
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Council Vote</h2>
-                    <p className="text-base text-[var(--text-muted)]">Watch the lobsters argue in real-time</p>
+            {/* ══════════════ COUNCIL VOTE ══════════════ */}
+            <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '8px', fontFamily: "'Space Grotesk', sans-serif" }}>Council Vote</h2>
+                    <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Watch the lobsters argue in real-time</p>
                 </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    <div className="xl:col-span-2">
-                        <LobsterChat />
-                    </div>
-                    <div className="space-y-6">
-                        <div className="glass-card p-6">
-                            <h3 className="font-bold text-sm mb-4 text-[var(--accent)] uppercase tracking-wider text-center">How Voting Works</h3>
-                            <ol className="space-y-3 text-sm text-[var(--text-secondary)]">
-                                <li className="flex gap-3 items-start">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>1</span>
-                                    <span>New token detected on PumpFun</span>
-                                </li>
-                                <li className="flex gap-3 items-start">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>2</span>
-                                    <span>Each lobster analyzes independently</span>
-                                </li>
-                                <li className="flex gap-3 items-start">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>3</span>
-                                    <span>5 votes cast: BUY, SKIP, or ABSTAIN</span>
-                                </li>
-                                <li className="flex gap-3 items-start">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>4</span>
-                                    <span>3/5 majority = trade executed</span>
-                                </li>
-                                <li className="flex gap-3 items-start">
-                                    <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>5</span>
-                                    <span>Unanimous = legendary tank event</span>
-                                </li>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
+                    <LobsterChat />
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+                        <div className="glass-card" style={{ padding: '24px' }}>
+                            <h3 style={{ fontWeight: 700, fontSize: '14px', marginBottom: '16px', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center' }}>How Voting Works</h3>
+                            <ol style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                                {['New token detected on PumpFun', 'Each lobster analyzes independently', '5 votes cast: BUY, SKIP, or ABSTAIN', '3/5 majority = trade executed', 'Unanimous = legendary tank event'].map((text, i) => (
+                                    <li key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                                        <span style={{ flexShrink: 0, width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, background: 'rgba(0,212,170,0.15)', color: 'var(--accent)' }}>{i + 1}</span>
+                                        <span>{text}</span>
+                                    </li>
+                                ))}
                             </ol>
                         </div>
 
-                        <div className="glass-card p-6">
-                            <h3 className="font-bold text-sm mb-4 text-[var(--accent)] uppercase tracking-wider text-center">Tank States</h3>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3"><span className="tank-badge reef-paradise text-[10px]">REEF PARADISE</span> <span className="text-xs text-[var(--text-muted)]">80-100%</span></div>
-                                <div className="flex items-center gap-3"><span className="tank-badge steady-currents text-[10px]">STEADY CURRENTS</span> <span className="text-xs text-[var(--text-muted)]">60-79%</span></div>
-                                <div className="flex items-center gap-3"><span className="tank-badge choppy-waters text-[10px]">CHOPPY WATERS</span> <span className="text-xs text-[var(--text-muted)]">40-59%</span></div>
-                                <div className="flex items-center gap-3"><span className="tank-badge red-tide text-[10px]">RED TIDE</span> <span className="text-xs text-[var(--text-muted)]">20-39%</span></div>
-                                <div className="flex items-center gap-3"><span className="tank-badge tank-breach text-[10px]">TANK BREACH</span> <span className="text-xs text-[var(--text-muted)]">0-19%</span></div>
+                        <div className="glass-card" style={{ padding: '24px' }}>
+                            <h3 style={{ fontWeight: 700, fontSize: '14px', marginBottom: '16px', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center' }}>Tank States</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="tank-badge reef-paradise" style={{ fontSize: '10px' }}>REEF PARADISE</span> <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>80-100%</span></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="tank-badge steady-currents" style={{ fontSize: '10px' }}>STEADY CURRENTS</span> <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>60-79%</span></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="tank-badge choppy-waters" style={{ fontSize: '10px' }}>CHOPPY WATERS</span> <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>40-59%</span></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="tank-badge red-tide" style={{ fontSize: '10px' }}>RED TIDE</span> <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>20-39%</span></div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><span className="tank-badge tank-breach" style={{ fontSize: '10px' }}>TANK BREACH</span> <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>0-19%</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════════ */}
-            {/* THE COUNCIL                                           */}
-            {/* ═══════════════════════════════════════════════════════ */}
-            <section className="max-w-6xl mx-auto px-6 mb-24">
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>The Council</h2>
-                    <p className="text-base text-[var(--text-muted)]">Meet the 5 lobsters who control your portfolio</p>
+            {/* ══════════════ THE COUNCIL ══════════════ */}
+            <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '8px', fontFamily: "'Space Grotesk', sans-serif" }}>The Council</h2>
+                    <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Meet the 5 lobsters who control your portfolio</p>
                 </div>
                 <CouncilRoster />
             </section>
